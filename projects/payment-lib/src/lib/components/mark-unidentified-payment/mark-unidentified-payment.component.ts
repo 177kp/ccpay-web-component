@@ -23,6 +23,7 @@ export class MarkUnidentifiedPaymentComponent implements OnInit {
   errorMessage: string;
   unassignedRecord:IBSPayments;
   siteID: string = null;
+  investigationComment: string;
 
   constructor(private formBuilder: FormBuilder,
   private paymentViewService: PaymentViewService,
@@ -57,6 +58,7 @@ export class MarkUnidentifiedPaymentComponent implements OnInit {
     this.investicationDetailHasError = false;
     const formerror = this.markPaymentUnidentifiedForm.controls.investicationDetail.errors;
     if (this.markPaymentUnidentifiedForm.dirty && this.markPaymentUnidentifiedForm.valid) {
+      this.investigationComment = this.markPaymentUnidentifiedForm.controls.investicationDetail.value;
       this.viewStatus = 'unidentifiedContinueConfirm';
     }else {
       if(this.markPaymentUnidentifiedForm.controls.investicationDetail.invalid ) {

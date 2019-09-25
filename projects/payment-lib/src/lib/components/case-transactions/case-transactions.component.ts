@@ -106,11 +106,14 @@ export class CaseTransactionsComponent implements OnInit {
         paymentsTotal = 0.00,
         remissionsTotal = 0.00;
       if (paymentGroup.fees) {
-        this.isFeeRecordsExist = true;
-        paymentGroup.fees.forEach(fee => {
+          paymentGroup.fees.forEach(fee => {
           feesTotal = feesTotal + fee.calculated_amount;
         });
       }
+
+      if (paymentGroup.fees.length > 0) {
+        this.isFeeRecordsExist = true;
+       }
 
       if (paymentGroup.payments) {
         paymentGroup.payments.forEach(payment => {
