@@ -109,4 +109,8 @@ export class PaymentViewService {
       catchError(this.errorHandlerService.handleError)
     );
   }
+  downloadSelectedReport(reportName: string, startDate: string, endDate:string): Observable<any> {
+    const url = `${this.paymentLibService.API_ROOT}/report/download?date_from=${startDate}&date_to=${endDate}&report_type=${reportName}`;
+    return this.http.get<Blob>(url, { withCredentials: true ,responseType: 'blob' as 'json' }).pipe( catchError(this.errorHandlerService.handleError) );
+  }
 }

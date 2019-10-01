@@ -43,8 +43,8 @@
             formControlName="selectedreport"
             name="selectedreport"
             type="radio"
-            value="ProcessedUnallocated" 
-            (change)= "onSelectionChange('ProcessedUnallocated')"
+            value="PROCESSED_UNALLOCATED" 
+            (change)= "onSelectionChange('PROCESSED_UNALLOCATED')"
             data-aria-controls="ProcessedUnallocated"/>
             <label class="govuk-label govuk-radios__label govuk-label--m" for="ProcessedUnallocated">Processed unallocated</label>
             <span class="form-hint">Payments that are marked as ‘Unidentified’ or ‘Transferred’ (Unsolicited requests)</span>
@@ -67,7 +67,6 @@
        
        </div>
      </div>
-
      <div  class="govuk-form-group">
       <div class="datefrom">
       <label class="govuk-label govuk-radios__label govuk-label--m" for="date-from">Date from</label>
@@ -80,7 +79,9 @@
       </div>
      </div>
     <div class="btnsubmit">
-     <button type="submit" (click)="downloadReport()" class="button" [disabled]="!reportsForm.valid">Download report</button>
+         <button type="submit" (click)="downloadReport()" class="button" [disabled]="!reportsForm.valid">Download report</button>
+
+     <!-- <a type="submit" [href]="downloadReport()" class="button" [ngClass]="{ disabled: !reportsForm.valid }">Download report</a> -->
    </div>
  </form>
     
