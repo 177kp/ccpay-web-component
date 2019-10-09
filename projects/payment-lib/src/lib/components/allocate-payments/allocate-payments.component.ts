@@ -124,7 +124,9 @@ this.isConfirmButtondisabled = true;
    getUnassignedPayment() {
     this.bulkScaningPaymentService.getBSPaymentsByDCN(this.bspaymentdcn).subscribe(
       unassignedPayments => {
-        this.unAllocatedPayment = unassignedPayments['data'].payments[0];
+        this.unAllocatedPayment = unassignedPayments['data'].payments.filter(payment => {
+          return payment && payment.dcn_reference == this.bspaymentdcn;
+        })[0];
         this.siteID = unassignedPayments['data'].responsible_service_id;
       },
       (error: any) => this.errorMessage = error

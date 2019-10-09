@@ -176,7 +176,9 @@ cancelMarkUnsolicitedPayments(type?:string){
     this.bulkScaningPaymentService.getBSPaymentsByDCN(this.bspaymentdcn).subscribe(
       unassignedPayments => {
         
-       this.unassignedRecord = unassignedPayments['data'].payments[0];
+       this.unassignedRecord = unassignedPayments['data'].payments.filter(payment => {
+        return payment && payment.dcn_reference == this.bspaymentdcn;
+      })[0];
        this.siteID = unassignedPayments['data'].responsible_service_id;
       },
       (error: any) => this.errorMessage = error

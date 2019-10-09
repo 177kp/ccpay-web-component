@@ -133,7 +133,7 @@ export class CaseTransactionsComponent implements OnInit {
             totalRefundAmount = (totalRefundAmount + grpOutstandingAmount);
           }
         } else {
-          this.isGrpOutstandingAmtPositive = true;
+          this.isGrpOutstandingAmtPositive = grpOutstandingAmount === 0;
         }
     });
     return totalRefundAmount * -1;
