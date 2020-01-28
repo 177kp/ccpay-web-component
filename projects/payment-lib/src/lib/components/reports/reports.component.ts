@@ -17,6 +17,7 @@ export class ReportsComponent implements OnInit {
   startDate: string;
   endDate: string;
   ccdCaseNumber: string;
+  isReportBtnDisabled: boolean = false;
   errorMessage = this.errorHandlerService.getServerErrorMessage(false);
   paymentGroups: IPaymentGroup[] = [];
 
@@ -59,6 +60,8 @@ export class ReportsComponent implements OnInit {
 }
 
 downloadReport(){
+  this.isReportBtnDisabled = true;
+
   const dataLossRptDefault = [{loss_resp:'',payment_asset_dcn:'',env_ref:'',env_item:'',resp_service_id:'',resp_service_name:'',date_banked:'',bgc_batch:'',payment_method:'',amount:''}],
     unProcessedRptDefault = [{resp_service_id:'',resp_service_name:'',exception_ref:'',ccd_ref:'',date_banked:'',bgc_batch:'',payment_asset_dcn:'',env_ref:'',env_item:'',payment_method:'',amount:''}],
     processedUnallocated =[{resp_service_id:'',resp_service_name:'',allocation_status:'',receiving_office:'',allocation_reason:'',ccd_exception_ref:'',ccd_case_ref:'',payment_asset_dcn:'',date_banked:'',bgc_batch:'',payment_method:'',amount:'',updated_by:''}],
@@ -78,9 +81,11 @@ downloadReport(){
             res.data= shortFallsRptDefault;
           }  
           this.xlFileService.exportAsExcelFile(res['data'], this.getFileName(this.reportsForm.get('selectedreport').value, selectedStartDate, selectedEndDate));
+          this.isReportBtnDisabled = false;
         },
         (error: any) => {
           this.errorMessage = this.errorHandlerService.getServerErrorMessage(true);
+          this.isReportBtnDisabled = false;
         })
     } else {
       this.bulkScaningPaymentService.downloadSelectedReport(selectedReportName,selectedStartDate,selectedEndDate).subscribe(
@@ -100,11 +105,12 @@ downloadReport(){
           }
         }
         }
-         
           this.xlFileService.exportAsExcelFile(res['data'], this.getFileName(this.reportsForm.get('selectedreport').value, selectedStartDate, selectedEndDate ));
+          this.isReportBtnDisabled = false;
         },
         (error: any) => {
           this.errorMessage = this.errorHandlerService.getServerErrorMessage(true);
+          this.isReportBtnDisabled = false;
         })
     }
   }

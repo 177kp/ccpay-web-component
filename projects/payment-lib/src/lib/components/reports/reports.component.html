@@ -76,7 +76,8 @@
       </div>
      </div>
     <div class="btnsubmit">
-     <button type="submit" (click)="downloadReport()" class="button" [disabled]="!reportsForm.valid">Download report</button>
+     <button type="submit" (click)="downloadReport()" class="button" [ngClass]='isReportBtnDisabled ? "button button--disabled govuk-!-margin-right-1" : "button govuk-!-margin-right-1"'
+      [disabled]="!reportsForm.valid || isReportBtnDisabled">Download report</button>
    </div>
  </form>
     
