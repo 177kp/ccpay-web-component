@@ -8,6 +8,7 @@ import {IFee} from '../../interfaces/IFee';
 import {IPayment} from '../../interfaces/IPayment';
 import {IRemission} from '../../interfaces/IRemission';
 import {Router} from '@angular/router';
+import { thisTypeAnnotation } from 'babel-types';
 
 @Component({
   selector: 'ccpay-case-transactions',
@@ -216,7 +217,7 @@ checkForExceptionRecord(): void {
         paymentGroup.remissions.forEach(remission => {
           remissionsTotal = remissionsTotal + remission.hwf_amount;
         });
-      }  
+      }
         grpOutstandingAmount = (feesTotal - remissionsTotal) - paymentsTotal;
         if (grpOutstandingAmount < 0) {
           if(totalRefundAmount === 0) {
@@ -245,9 +246,9 @@ checkForExceptionRecord(): void {
     event.preventDefault();
     this.router.navigateByUrl(`/reports?selectedOption=${this.selectedOption}&ccdCaseNumber=${this.ccdCaseNumber}`);
   }
-  loadFeeSummaryPage() {
+  loadFeeSummaryPage(paymentGroup: IPaymentGroup) {
     this.paymentLibComponent.bspaymentdcn = null;
-    this.paymentLibComponent.paymentGroupReference = '';
+    this.paymentLibComponent.paymentGroupReference = paymentGroup.payment_group_reference;
     this.paymentLibComponent.viewName = 'fee-summary';
   }
 

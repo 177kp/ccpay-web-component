@@ -11,7 +11,6 @@ import { LoggerService } from '../shared/logger/logger.service';
 import {IPaymentGroup} from '../../interfaces/IPaymentGroup';
 import { AddRemissionRequest } from '../../interfaces/AddRemissionRequest';
 import { PaymentToPayhubRequest } from '../../interfaces/PaymentToPayhubRequest';
-import { IPaymentList} from '../../interfaces/IPaymentList';
 import { UnidentifiedPaymentsRequest } from '../../interfaces/UnidentifiedPaymentsRequest';
 import { UnsolicitedPaymentsRequest } from '../../interfaces/UnsolicitedPaymentsRequest';
 import { Meta } from '@angular/platform-browser';
@@ -89,12 +88,6 @@ export class PaymentViewService {
   }
   postPaymentToPayHub(body: PaymentToPayhubRequest, paymentGroupRef: string): Observable<any> {
     return this.https.post(`${this.paymentLibService.API_ROOT}/payment-groups/${paymentGroupRef}/card-payments`, body).pipe(
-      catchError(this.errorHandlerService.handleError)
-    );
-  }
-
-  postPaymentListToPayHub(body: IPaymentList): Observable<any> {
-    return this.https.post(`${this.paymentLibService.API_ROOT}/payment-groups/card-payments`, body).pipe(
       catchError(this.errorHandlerService.handleError)
     );
   }

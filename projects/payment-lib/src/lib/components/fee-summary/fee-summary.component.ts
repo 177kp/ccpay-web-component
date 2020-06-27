@@ -24,7 +24,7 @@ export class FeeSummaryComponent implements OnInit {
   @Input() ccdCaseNumber: string;
 
   bsPaymentDcnNumber: string;
-  paymentGroup: any = [];
+  paymentGroup: any;
   errorMessage: string;
   viewStatus = 'main';
   currentFee: IFee;
@@ -34,9 +34,9 @@ export class FeeSummaryComponent implements OnInit {
   upPaymentErrorMessage: string;
   selectedOption:string;
   isBackButtonEnable: boolean = true;
-  outStandingAmount: number = 0.00;
+  outStandingAmount: number;
   isFeeAmountZero: boolean = false;;
-  totalAfterRemission: number = 0.00;
+  totalAfterRemission: number = 0;
   isConfirmationBtnDisabled: boolean = false;
   isRemoveBtnDisabled: boolean = false;
   isPaymentExist: boolean = false;
@@ -88,13 +88,24 @@ export class FeeSummaryComponent implements OnInit {
           if(unassignedPayments['data'].payments) {
             this.service = unassignedPayments['data'].responsible_service_id;
           } else {
-            this.upPaymentErrorMessage = 'error';  
-          }      
+            this.upPaymentErrorMessage = 'error';
+          }
         },
         (error: any) => this.upPaymentErrorMessage = error
       );
     }
 
+  }
+
+  getRemissionByFeeCode(feeCode: string): IRemission {
+    if (this.paymentGroup && this.paymentGroup.remissions && this.paymentGroup.remissions.length > 0) {
+      for (const remission of this.paymentGroup.remissions) {
+        if (remission.fee_code === feeCode) {
+          return remission;
+        }
+      }
+    }
+    return null;
   }
 
   addRemission(fee: IFee) {
@@ -109,33 +120,25 @@ export class FeeSummaryComponent implements OnInit {
       paymentGroups => {
         console.log(paymentGroups['payment_groups'])
         if(paymentGroups['payment_groups'] && paymentGroups['payment_groups'].length > 0) {
-          paymentGroups['payment_groups'].forEach(paymentGroup => {
+          paymentGroups.forEach(paymentGroup => {
             if (paymentGroup.fees) {
               paymentGroup.fees.forEach(fee => {
-                if(fee.date_created) {
-                  this.totalAfterRemission  = this.totalAfterRemission  + fee.net_amount;
-                  let allocated_amount = fee.allocated_amount? fee.allocated_amount : 0.00;
-                  this.outStandingAmount  = this.outStandingAmount  + (fee.net_amount - allocated_amount);
-                  if(fee.calculated_amount === 0) {
-                    this.isFeeAmountZero = true;
-                  }
-                  fee.isFeeAmountZero = this.isFeeAmountZero;
-                  fee.isPaymentExist = paymentGroup.payments ? paymentGroup.payments.length > 0 : false;
-                  if (paymentGroup.remissions) {
-                    paymentGroup.remissions.forEach(remission => {
-                      if (remission.fee_code === fee.fee.code) {
-                          fee.remission = remission;
-                      }
-                    });
-                  }
-                  this.paymentGroup.push(fee);
-              }
+                this.totalAfterRemission  = this.totalAfterRemission  + fee.net_amount;
+                if(fee.calculated_amount === 0) {
+                  this.isFeeAmountZero = true;
+                }
               });
             }
+            this.outStandingAmount = this.bulkScaningPaymentService.calculateOutStandingAmount(paymentGroup);
+            paymentGroup.fees['outStandingAmount'] = this.outStandingAmount;
+            paymentGroup.fees['isFeeAmountZero'] = this.isFeeAmountZero;
+            paymentGroup.fees['totalAfterRemission'] = this.totalAfterRemission;
+             paymentGroup.fees['isPaymentExist'] = paymentGroup.payments ? paymentGroup.payments.length > 0 : false;
+            this.paymentGroup.push(paymentGroup.fees);
 
           });
         }
-        console.log(this.paymentGroup, this.totalAfterRemission,this.outStandingAmount)
+        console.log(this.paymentGroup)
     },
       (error: any) => this.errorMessage = error
     );
@@ -198,8 +201,8 @@ export class FeeSummaryComponent implements OnInit {
     const seriveName = this.service ==='AA07' ? 'DIVORCE': this.service ==='AA08' ? 'PROBATE' : 'FPL',
 
       requestBody = new PaymentToPayhubRequest(this.ccdCaseNumber, this.outStandingAmount, this.service, seriveName),
-      res = new IPaymentList([this.outStandingAmount, this.ccdCaseNumber, this.ccdCaseNumber, this.paymentGroup, seriveName, this.service]);
-    this.paymentViewService.postPaymentListToPayHub(res).subscribe(
+      res = new IPaymentList([]);
+    this.paymentViewService.postPaymentToPayHub(requestBody, this.paymentGroupRef).subscribe(
       response => {
         this.location.go(`payment-history?view=fee-summary`);
         this.payhubHtml = response;
@@ -212,20 +215,6 @@ export class FeeSummaryComponent implements OnInit {
         this.router.navigateByUrl('/pci-pal-failure');
       }
     );
-
-    //     this.paymentViewService.postPaymentToPayHub(requestBody, this.paymentGroupRef).subscribe(
-    //   response => {
-    //     this.location.go(`payment-history?view=fee-summary`);
-    //     this.payhubHtml = response;
-    //     this.viewStatus = 'payhub_view';
-    //     this.isBackButtonEnable=false;
-    //   },
-    //   (error: any) => {
-    //     this.errorMessage = error;
-    //     this.isConfirmationBtnDisabled = false;
-    //     this.router.navigateByUrl('/pci-pal-failure');
-    //   }
-    // );
   }
   goToAllocatePage(outStandingAmount: number, isFeeAmountZero: Boolean) {
     if (outStandingAmount > 0 || (outStandingAmount === 0 && isFeeAmountZero)) {
