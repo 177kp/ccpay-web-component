@@ -43,7 +43,10 @@
       <label class="govuk-label custom-govuk-label" for="responsibleOffice">
         Receiving Site ID (Receiving court/Bulk centre site ID)    
       </label>
-      <input class="govuk-input govuk-input--width-30 govuk-!-margin-right-1" placeholder='Manchester District Probate Registry (P219)'  id="responsibleOffice" name="responsibleOffice" type="text" formControlName="responsibleOffice" disabled>
+      <select class="form-control short-input" id="responsibleOffice" formControlName="responsibleOffice" (change)="selectchange($event)">
+        <option value="P219">Manchester District Probate Registry (P219)</option>
+        <option value="Y964">South West Regional Divorce Centre (Y964)</option>
+      </select>
     </div>
    <div class="govuk-button--group">
       <button type="submit" class="button" (click)="saveAndContinue()">
@@ -76,7 +79,7 @@
             <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
             <td class="govuk-table__cell">{{reason}}</td>
-            <td class="govuk-table__cell">Manchester District Probate Registry (P219)</td>
+            <td class="govuk-table__cell">{{selectedSiteName}}</td>
             </tr>
             </tbody>
           </table>

@@ -25,7 +25,7 @@ export class XlFileService {
      worksheet =  this.setUnprocessedReportHeaders(worksheet);
      worksheet = this.autoFitColumns(worksheet,json);
     } else if(excelFileName.match('Processed_Unallocated')!== null){
-      worksheet =  XLSX.utils.json_to_sheet(json,{header:['resp_service_id','resp_service_name','allocation_status','receiving_office','allocation_reason','ccd_exception_reference','ccd_case_reference','payment_asset_dcn','date_banked','bgc_batch','payment_method','amount']});
+      worksheet =  XLSX.utils.json_to_sheet(json,{header:['resp_service_id','resp_service_name','allocation_status','receiving_office','allocation_reason','ccd_exception_reference','ccd_case_reference','payment_asset_dcn','env_ref','env_item','date_banked','bgc_batch','payment_method','amount']});
       worksheet =  this.setProcessedUnallocatedReportHeaders(worksheet);
       worksheet = this.autoFitColumns(worksheet,json);
     } else {
@@ -103,10 +103,12 @@ private setProcessedUnallocatedReportHeaders (worksheet: XLSX.WorkSheet): XLSX.W
   worksheet.F1.v = "CCD_Exception_Ref";
   worksheet.G1.v = "CCD_Case_Ref";
   worksheet.H1.v = "Payment_Asset_DCN";
-  worksheet.I1.v = "Date_Banked";
-  worksheet.J1.v = "BGC_Batch";
-  worksheet.K1.v = "Payment_Method";
-  worksheet.L1.v = "Amount";
+  worksheet.I1.v = "Envelope_Ref";
+  worksheet.J1.v = "Envelope_Item";
+  worksheet.K1.v = "Date_Banked";
+  worksheet.L1.v = "BGC_Batch";
+  worksheet.M1.v = "Payment_Method";
+  worksheet.N1.v = "Amount";
   return worksheet;
 }
 

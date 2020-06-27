@@ -61,7 +61,7 @@ export class ReportsComponent implements OnInit {
 downloadReport(){
   const dataLossRptDefault = [{loss_resp:'',payment_asset_dcn:'',env_ref:'',env_item:'',resp_service_id:'',resp_service_name:'',date_banked:'',bgc_batch:'',payment_method:'',amount:''}],
     unProcessedRptDefault = [{resp_service_id:'',resp_service_name:'',exception_ref:'',ccd_ref:'',date_banked:'',bgc_batch:'',payment_asset_dcn:'',env_ref:'',env_item:'',payment_method:'',amount:''}],
-    processedUnallocated =[{resp_service_id:'',resp_service_name:'',allocation_status:'',receiving_office:'',allocation_reason:'',ccd_exception_ref:'',ccd_case_ref:'',payment_asset_dcn:'',date_banked:'',bgc_batch:'',payment_method:'',amount:'',updated_by:''}],
+    processedUnallocated =[{resp_service_id:'',resp_service_name:'',allocation_status:'',receiving_office:'',allocation_reason:'',ccd_exception_ref:'',ccd_case_ref:'',payment_asset_dcn:'',env_ref:'',env_item:'',date_banked:'',bgc_batch:'',payment_method:'',amount:'',updated_by:''}],
     shortFallsRptDefault = [{resp_service_id:'',resp_service_name:'',surplus_shortfall:'',balance:'',payment_amount:'',ccd_case_reference:'',ccd_exception_reference:'',processed_date:'', reason:'', explanation:'', user_name:''}],
     selectedReportName = this.reportsForm.get('selectedreport').value,
     selectedStartDate = this.tranformDate(this.reportsForm.get('startDate').value),
@@ -76,7 +76,24 @@ downloadReport(){
             res.data= processedUnallocated;
           } else if(res['data'].length === 0 && selectedReportName === 'SURPLUS_AND_SHORTFALL' ) {
             res.data= shortFallsRptDefault;
-          }  
+          } 
+          if(res['data'].length > 0) {
+            for( var i=0; i< res['data'].length; i++) {
+              if(res['data'][i]["payment_asset_dcn"] !== undefined) {
+                res['data'][i]['env_ref'] = res['data'][i]["payment_asset_dcn"].substr(0,13);
+                res['data'][i]['env_item'] = res['data'][i]["payment_asset_dcn"].substr(13,21);
+              }
+              if(res['data'][i]["amount"] !== undefined) {
+                res['data'][i]['amount'] = this.convertToFloatValue(res['data'][i]['amount']);
+              }
+              if(res['data'][i]["balance"] !== undefined) {
+                res['data'][i]['balance'] = this.convertToFloatValue(res['data'][i]["balance"]);
+              }
+              if(res['data'][i]["payment_amount"] !== undefined) {
+                res['data'][i]['payment_amount'] = this.convertToFloatValue(res['data'][i]['payment_amount']);
+              }
+            }
+          } 
           this.xlFileService.exportAsExcelFile(res['data'], this.getFileName(this.reportsForm.get('selectedreport').value, selectedStartDate, selectedEndDate));
         },
         (error: any) => {
@@ -94,6 +111,9 @@ downloadReport(){
           }
           if(res['data'].length > 0) {
           for( var i=0; i< res['data'].length; i++) {
+            if(res['data'][i]["amount"] !== undefined) {
+              res['data'][i]['amount'] = this.convertToFloatValue(res['data'][i]['amount']);
+            }
             if(res['data'][i]["payment_asset_dcn"] !== undefined) {
             res['data'][i]['env_ref'] = res['data'][i]["payment_asset_dcn"].substr(0,13);
             res['data'][i]['env_item'] = res['data'][i]["payment_asset_dcn"].substr(13,21);
@@ -166,5 +186,9 @@ downloadReport(){
       }
       return value;
     });
+  }
+  
+  convertToFloatValue(amt) {
+    return amt ? Number.parseFloat(amt).toFixed(2): '0.00';
   }
 }

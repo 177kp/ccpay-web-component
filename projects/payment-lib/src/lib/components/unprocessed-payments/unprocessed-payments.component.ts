@@ -15,6 +15,8 @@ export class UnprocessedPaymentsComponent implements OnInit {
   @Input('IS_BUTTON_ENABLE') IS_BUTTON_ENABLE: boolean;
   @Input('IS_OS_AMT_AVAILABLE') IS_OS_AMT_AVAILABLE: boolean;
   @Output() selectedUnprocessedFeeEvent: EventEmitter<string> = new EventEmitter();
+  @Output() getUnprocessedFeeCount: EventEmitter<string> = new EventEmitter();
+
   viewStatus = 'main';
   unassignedRecordList: IBSPayments;
   upPaymentErrorMessage: string = null;
@@ -54,9 +56,13 @@ export class UnprocessedPaymentsComponent implements OnInit {
             this.setValuesForUnassignedRecord(unassignedPayments);
           } else {
             this.upPaymentErrorMessage = 'error';
+            this.getUnprocessedFeeCount.emit('0');
           }
         },
-        (error: any) => this.upPaymentErrorMessage = error
+        (error: any) => {
+          this.upPaymentErrorMessage = error;
+          this.getUnprocessedFeeCount.emit('0');
+        }
       );
     } else {
         this.bulkScaningPaymentService.getBSPaymentsByCCD(this.ccdCaseNumber).subscribe(
@@ -67,9 +73,13 @@ export class UnprocessedPaymentsComponent implements OnInit {
             this.setValuesForUnassignedRecord(unassignedPayments);
           } else {
             this.upPaymentErrorMessage = 'error';
+            this.getUnprocessedFeeCount.emit('0');
           }
         },
-        (error: any) => this.upPaymentErrorMessage = error
+        (error: any) => {
+          this.upPaymentErrorMessage = error;
+          this.getUnprocessedFeeCount.emit('0');
+        }
       );
     }
 
@@ -81,6 +91,7 @@ export class UnprocessedPaymentsComponent implements OnInit {
       this.isExceptionCase = true;
     }
     this.isRecordExist =  this.unassignedRecordList.length === 0;
+    this.getUnprocessedFeeCount.emit(<any>this.unassignedRecordList.length);
   }
   formatUnassignedRecordId(ID: Number) {
     return `unassignrecord-${ID}`;

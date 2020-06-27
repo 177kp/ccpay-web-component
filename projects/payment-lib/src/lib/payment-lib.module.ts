@@ -18,6 +18,7 @@ import { ErrorBannerComponent } from './components/error-banner/error-banner.com
 import { MarkUnidentifiedPaymentComponent } from './components/mark-unidentified-payment/mark-unidentified-payment.component';
 import { MarkUnsolicitedPaymentComponent } from './components/mark-unsolicited-payment/mark-unsolicited-payment.component';
 import { UnprocessedPaymentsComponent } from './components/unprocessed-payments/unprocessed-payments.component';
+import { ProcessedPaymentsComponent } from './components/processed-payments/processed-payments.component';
 import { AllocatePaymentsComponent } from './components/allocate-payments/allocate-payments.component';
 import { AddRemissionComponent } from './components/add-remission/add-remission.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -45,6 +46,7 @@ import { XlFileService } from './services/xl-file/xl-file.service';
     MarkUnidentifiedPaymentComponent,
     MarkUnsolicitedPaymentComponent,
     UnprocessedPaymentsComponent,
+    ProcessedPaymentsComponent,
     AllocatePaymentsComponent,
     PbaDetailsComponent,
     CaseTransactionsComponent,

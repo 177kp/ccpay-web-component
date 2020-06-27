@@ -22,6 +22,7 @@ export class PaymentLibComponent implements OnInit {
   @Input('API_ROOT') API_ROOT: string;
   @Input('BULKSCAN_API_ROOT') BULKSCAN_API_ROOT: string;
   @Input('CCD_CASE_NUMBER') CCD_CASE_NUMBER: string;
+  @Input('EXC_REFERENCE') EXC_REFERENCE: string;
   @Input('PAYMENT_METHOD') PAYMENT_METHOD: string;
   @Input('VIEW') VIEW: string;
   @Input('PAYMENT_GROUP_REF') PAYMENT_GROUP_REF?: string;
