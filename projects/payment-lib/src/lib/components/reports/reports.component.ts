@@ -17,6 +17,9 @@ export class ReportsComponent implements OnInit {
   startDate: string;
   endDate: string;
   ccdCaseNumber: string;
+  isDownLoadButtondisabled:Boolean = false;
+  isStartDateLesthanEndDate: Boolean = false;
+  isDateRangeBetnWeek: Boolean = false;
   errorMessage = this.errorHandlerService.getServerErrorMessage(false);
   paymentGroups: IPaymentGroup[] = [];
 
@@ -38,14 +41,23 @@ export class ReportsComponent implements OnInit {
  }
 
  getSelectedFromDate(): void {
- this.validateDates();
+ this.validateDates(this.reportsForm.get('selectedreport').value);
  }
 
- validateDates(){
+ validateDates(reportName){
   const selectedStartDate = this.tranformDate(this.reportsForm.get('startDate').value),
     selectedEndDate = this.tranformDate(this.reportsForm.get('endDate').value);
+  const isDateRangeMoreThanWeek = (<any>new Date(selectedStartDate) - <any>new Date(selectedEndDate))/(1000 * 3600 * -24) > 7;
   if(new Date(selectedStartDate) > new Date(selectedEndDate) && selectedEndDate !== ''){
     this.reportsForm.get('startDate').setValue('');
+    this.isDateRangeBetnWeek = false;
+    this.isStartDateLesthanEndDate = true;
+  } else if(reportName && reportName ==='SURPLUS_AND_SHORTFALL' && isDateRangeMoreThanWeek ) {
+    this.isDateRangeBetnWeek = true;
+    this.isStartDateLesthanEndDate = false;
+  } else {
+    this.isDateRangeBetnWeek = false;
+    this.isStartDateLesthanEndDate = false;
   }
 
  }
@@ -59,6 +71,7 @@ export class ReportsComponent implements OnInit {
 }
 
 downloadReport(){
+  this.isDownLoadButtondisabled = true;
   const dataLossRptDefault = [{loss_resp:'',payment_asset_dcn:'',env_ref:'',env_item:'',resp_service_id:'',resp_service_name:'',date_banked:'',bgc_batch:'',payment_method:'',amount:''}],
     unProcessedRptDefault = [{resp_service_id:'',resp_service_name:'',exception_ref:'',ccd_ref:'',date_banked:'',bgc_batch:'',payment_asset_dcn:'',env_ref:'',env_item:'',payment_method:'',amount:''}],
     processedUnallocated =[{resp_service_id:'',resp_service_name:'',allocation_status:'',receiving_office:'',allocation_reason:'',ccd_exception_ref:'',ccd_case_ref:'',payment_asset_dcn:'',date_banked:'',bgc_batch:'',payment_method:'',amount:'',updated_by:''}],
@@ -77,9 +90,11 @@ downloadReport(){
           } else if(res['data'].length === 0 && selectedReportName === 'SURPLUS_AND_SHORTFALL' ) {
             res.data= shortFallsRptDefault;
           }  
+          this.isDownLoadButtondisabled = false;
           this.xlFileService.exportAsExcelFile(res['data'], this.getFileName(this.reportsForm.get('selectedreport').value, selectedStartDate, selectedEndDate));
         },
         (error: any) => {
+          this.isDownLoadButtondisabled = false;
           this.errorMessage = this.errorHandlerService.getServerErrorMessage(true);
         })
     } else {
@@ -100,10 +115,11 @@ downloadReport(){
           }
         }
         }
-         
+          this.isDownLoadButtondisabled = false;
           this.xlFileService.exportAsExcelFile(res['data'], this.getFileName(this.reportsForm.get('selectedreport').value, selectedStartDate, selectedEndDate ));
         },
         (error: any) => {
+          this.isDownLoadButtondisabled = false;
           this.errorMessage = this.errorHandlerService.getServerErrorMessage(true);
         })
     }

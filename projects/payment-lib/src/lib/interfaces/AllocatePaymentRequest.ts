@@ -35,7 +35,7 @@ export class AllocatePaymentRequest {
       name: 'success'
     }
     this.payment_method = unAllocatedPayment.payment_method;
-    this.requestor= siteID==='AA07' ? 'DIVORCE' : 'PROBATE';
+    this.requestor= siteID==='AA07' ? 'DIVORCE' : siteID==='AA09' ? 'FINREM' : 'PROBATE';
     this.site_id= siteID;
   }
 }

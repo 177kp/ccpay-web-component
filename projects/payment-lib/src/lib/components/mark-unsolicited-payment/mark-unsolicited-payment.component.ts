@@ -35,6 +35,8 @@ export class MarkUnsolicitedPaymentComponent implements OnInit {
   isConfirmButtondisabled:Boolean = false;
   ccdReference: string = null;
   exceptionReference: string = null;
+  selectedSiteId: string;
+  selectedSiteName: string;
 
   constructor(private formBuilder: FormBuilder,
   private paymentViewService: PaymentViewService,
@@ -83,7 +85,7 @@ export class MarkUnsolicitedPaymentComponent implements OnInit {
             this.errorMessage = this.getErrorMessage(false);
             const response2 = JSON.parse(res2),
             reqBody = new UnsolicitedPaymentsRequest
-            (response2['data'].payment_group_reference, response2['data'].reference, controls.reason.value, controls.responsibleOffice.value, controls.responsiblePerson.value, controls.emailId.value);
+            (response2['data'].payment_group_reference, response2['data'].reference, controls.reason.value, this.selectedSiteId, controls.responsiblePerson.value, controls.emailId.value);
              if (response2.success) {
               this.paymentViewService.postBSUnsolicitedPayments(reqBody).subscribe(
                 res3 => {
@@ -118,12 +120,12 @@ export class MarkUnsolicitedPaymentComponent implements OnInit {
     this.resetForm([false,false,false,false,false,false], 'all');
         const formerror = this.markPaymentUnsolicitedForm.controls.reason.errors;
         const reasonField = this.markPaymentUnsolicitedForm.controls.reason;
-        this.markPaymentUnsolicitedForm.controls.responsibleOffice.setValue('P219');
-        const officeIdField = this.markPaymentUnsolicitedForm.controls.responsibleOffice;
+        // this.markPaymentUnsolicitedForm.controls.responsibleOffice.setValue('P219');
+        const officeIdField = this.selectedSiteId;
     if (this.markPaymentUnsolicitedForm.dirty && this.markPaymentUnsolicitedForm.valid) {
       const controls = this.markPaymentUnsolicitedForm.controls;
       this.emailId = controls.emailId.value;
-      this.responsibleOffice = controls.responsibleOffice.value;
+      this.responsibleOffice = officeIdField;
       this.responsiblePerson = controls.responsiblePerson.value;
       this.reason = controls.reason.value;
       this.viewStatus = 'unsolicitedContinueConfirm';
@@ -140,12 +142,12 @@ export class MarkUnsolicitedPaymentComponent implements OnInit {
       if(formerror && formerror.maxlength && formerror.maxlength.actualLength > 255 ) {
         this.resetForm([false,false,false,true,false,false], 'reason');
       }
-      if(officeIdField.value == '') {
-        this.resetForm([false,false,false,false,true,false], 'responsibleOffice');
-      }
-      if(officeIdField.value != '' && officeIdField.invalid) {
-        this.resetForm([false,false,false,false,false,true],'responsibleOffice');
-      }
+      // if(officeIdField.value == '') {
+      //   this.resetForm([false,false,false,false,true,false], 'responsibleOffice');
+      // }
+      // if(officeIdField.value != '' && officeIdField.invalid) {
+      //   this.resetForm([false,false,false,false,false,true],'responsibleOffice');
+      // }
     }
   }
   resetForm(val, field) {
@@ -217,5 +219,10 @@ cancelMarkUnsolicitedPayments(type?:string){
       showError: isErrorExist
     };
   }
+
+  selectchange(args){ 
+    this.selectedSiteId = args.target.value; 
+    this.selectedSiteName = args.target.options[args.target.selectedIndex].text; 
+  } 
 
 }
