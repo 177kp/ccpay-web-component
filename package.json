@@ -62,7 +62,7 @@
     "tslib": "^1.7.1",
     "tslint": "~5.9.1",
     "typescript": "~2.7.2",
-    "xlsx": "^0.15.1"
+    "xlsx": "^0.17.0"
   },
   "license": "MIT"
 }
